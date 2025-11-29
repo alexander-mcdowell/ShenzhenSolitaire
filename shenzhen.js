@@ -128,9 +128,19 @@ function init() {
     canvas.addEventListener("mousedown", mouseDownEvent);
     canvas.addEventListener("mouseup", mouseUpEvent);
     canvas.addEventListener("mousemove", mouseMoveEvent);
-    canvas.addEventListener("touchstart", mouseDownEvent);
-    canvas.addEventListener("touchend", mouseUpEvent);
-    canvas.addEventListener("touchmove", mouseMoveEvent);
+
+    canvas.addEventListener("touchstart", (event) => {
+        event.preventDefault();
+        mouseDownEvent(event);
+    });
+    canvas.addEventListener("touchend", (event) => {
+        event.preventDefault();
+        mouseUpEvent(event);
+    });
+    canvas.addEventListener("touchmove", (event) => {
+        event.preventDefault();
+        mouseMoveEvent(event);
+    });
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
@@ -629,8 +639,8 @@ function autoMove() {
 function mouseDownEvent(event) {
     if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
     else {
-        var rect = e.target.getBoundingClientRect();
-        mousePos = [e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top];
+        var rect = event.target.getBoundingClientRect();
+        mousePos = [event.targetTouches[0].clientX - rect.left, event.targetTouches[0].clientY - rect.top];
     }
 
     // Check if we are clicking on a button
@@ -678,8 +688,8 @@ function mouseDownEvent(event) {
 function mouseUpEvent(event) {
     if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
     else {
-        var rect = e.target.getBoundingClientRect();
-        mousePos = [e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top];
+        var rect = event.target.getBoundingClientRect();
+        mousePos = [event.targetTouches[0].clientX - rect.left, event.targetTouches[0].clientY - rect.top];
     }
 
     if (selectedStack.length == 0) return;
@@ -793,9 +803,9 @@ function mouseMoveEvent(event) {
         newY = event.offsetY;
     }
     else {
-        var rect = e.target.getBoundingClientRect();
-        newX = e.targetTouches[0].pageX - rect.left;
-        newY = e.targetTouches[0].pageY - rect.top;
+        var rect = event.target.getBoundingClientRect();
+        newX = event.targetTouches[0].clientX - rect.left;
+        newY = event.targetTouches[0].clientY - rect.top;
     }
 
     for (let card of selectedStack) {
