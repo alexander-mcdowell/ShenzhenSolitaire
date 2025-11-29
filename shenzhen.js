@@ -637,7 +637,7 @@ function autoMove() {
 }
 
 function mouseDownEvent(event) {
-    if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
+    if (event.type == "mousedown") mousePos = [event.offsetX, event.offsetY];
     else {
         var rect = event.target.getBoundingClientRect();
         mousePos = [event.targetTouches[0].clientX - rect.left, event.targetTouches[0].clientY - rect.top];
@@ -740,7 +740,7 @@ function mouseUpEvent(event) {
         }
 
         // Update movability of cards below the newly revealed card at the old location
-        if (oldCardLoc != null) {
+        if (oldCardLoc != null && oldCardLoc[0] != "D") {
             let i = oldCardLoc[0];
             let movable = true;
             for (let j = piles[i].length-1; j >= 0; j--) {
@@ -798,7 +798,7 @@ function mouseUpEvent(event) {
 
 function mouseMoveEvent(event) {
     let newX, newY;
-    if (event.type == "mouseup") {
+    if (event.type == "mousemove") {
         newX = event.offsetX;
         newY = event.offsetY;
     }
