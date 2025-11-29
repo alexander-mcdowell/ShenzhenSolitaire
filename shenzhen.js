@@ -125,9 +125,11 @@ function init() {
     }
 
     // Event listeners
-    canvas.addEventListener("mousedown", mouseDownEvent);
-    canvas.addEventListener("mouseup", mouseUpEvent);
-    canvas.addEventListener("mousemove", mouseMoveEvent);
+    canvas.addEventListener("pointerdown", mouseDownEvent);
+    canvas.addEventListener("pointerup", mouseUpEvent);
+    canvas.addEventListener("pointermove", mouseMoveEvent);
+
+    canvas.addEventListener("touchmove", (event) => {event.preventDefault();})
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
