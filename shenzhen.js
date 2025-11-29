@@ -688,8 +688,9 @@ function mouseDownEvent(event) {
 function mouseUpEvent(event) {
     if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
     else {
+        console.log(event.targetTouches);
         var rect = event.target.getBoundingClientRect();
-        mousePos = [event.targetTouches[0].clientX - rect.left, event.targetTouches[0].clientY - rect.top];
+        mousePos = [event.changedTouches[0].clientX - rect.left, event.changedTouches[0].clientY - rect.top];
     }
 
     if (selectedStack.length == 0) return;
