@@ -718,9 +718,8 @@ function mouseUpEvent(event) {
         }
 
         // Update movability of cards below the newly revealed card at the old location
-        let i = oldCardLoc[0];
         if (oldCardLoc != null) {
-            console.log("sklbiobit");
+            let i = oldCardLoc[0];
             let movable = true;
             for (let j = piles[i].length-1; j >= 0; j--) {
                 if (j+1 < piles[i].length) {
