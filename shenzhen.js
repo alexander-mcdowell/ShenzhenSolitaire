@@ -125,11 +125,12 @@ function init() {
     }
 
     // Event listeners
-    canvas.addEventListener("pointerdown", mouseDownEvent);
-    canvas.addEventListener("pointerup", mouseUpEvent);
-    canvas.addEventListener("pointermove", mouseMoveEvent);
-
-    canvas.addEventListener("touchmove", (event) => {event.preventDefault();})
+    canvas.addEventListener("mousedown", mouseDownEvent);
+    canvas.addEventListener("mouseup", mouseUpEvent);
+    canvas.addEventListener("mousemove", mouseMoveEvent);
+    canvas.addEventListener("touchstart", mouseDownEvent);
+    canvas.addEventListener("touchend", mouseUpEvent);
+    canvas.addEventListener("touchmove", mouseMoveEvent);
 
     if (canvas.getContext) {
         context = canvas.getContext("2d");
@@ -626,7 +627,11 @@ function autoMove() {
 }
 
 function mouseDownEvent(event) {
-    mousePos = [event.offsetX, event.offsetY];
+    if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
+    else {
+        var rect = e.target.getBoundingClientRect();
+        mousePos = [e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top];
+    }
 
     // Check if we are clicking on a button
     let x = Math.round(leftPileX + 3.5 * (cardWidth + pileSpacing));
@@ -671,7 +676,12 @@ function mouseDownEvent(event) {
 }
 
 function mouseUpEvent(event) {
-    mousePos = [event.offsetX, event.offsetY];
+    if (event.type == "mouseup") mousePos = [event.offsetX, event.offsetY];
+    else {
+        var rect = e.target.getBoundingClientRect();
+        mousePos = [e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top];
+    }
+
     if (selectedStack.length == 0) return;
 
     let pos = canPlace(selectedStack[0], mousePos[0], mousePos[1]);
@@ -777,12 +787,23 @@ function mouseUpEvent(event) {
 }
 
 function mouseMoveEvent(event) {
+    let newX, newY;
+    if (event.type == "mouseup") {
+        newX = event.offsetX;
+        newY = event.offsetY;
+    }
+    else {
+        var rect = e.target.getBoundingClientRect();
+        newX = e.targetTouches[0].pageX - rect.left;
+        newY = e.targetTouches[0].pageY - rect.top;
+    }
+
     for (let card of selectedStack) {
-        card.x += event.offsetX - mousePos[0];
-        card.y += event.offsetY - mousePos[1];
+        card.x += newX - mousePos[0];
+        card.y += newY - mousePos[1];
         draw();
     }
-    mousePos = [event.offsetX, event.offsetY];
+    mousePos = [newX, newY];
 }
 
 function draw() {
