@@ -128,6 +128,7 @@ function init() {
     canvas.addEventListener("mousedown", mouseDownEvent);
     canvas.addEventListener("mouseup", mouseUpEvent);
     canvas.addEventListener("mousemove", mouseMoveEvent);
+    canvas.addEventListener("mouseleave", mouseLeaveEvent);
 
     canvas.addEventListener("touchstart", (event) => {
         event.preventDefault();
@@ -305,8 +306,10 @@ function updateDragonButton() {
     // Update corresponding button flag
     for (let i = 0; i < 3; i++) {
         if (dragonCounts[i] == 4) {
+            // Fill first available spot
             let available = false;
             for (let j = 0; j < 3; j++) {
+                if (isLocked[j]) continue;
                 if (dragonPile[j] == null || 
                     (dragonPile[j].color == i && dragonPile[j].label == "D")) {
                     available = true;
@@ -815,6 +818,41 @@ function mouseMoveEvent(event) {
         draw();
     }
     mousePos = [newX, newY];
+}
+
+function mouseLeaveEvent(event) {
+    if (selectedStack.length == 0) return;
+    // If we have selected a card, return it to the original position
+    // Return to dragon pile
+    if (oldCardLoc[0] == "D") {
+        dragonPile[parseInt(oldCardLoc[1])] = selectedStack[0];
+
+        // Restore previous location
+        selectedStack[0].loc = oldCardLoc;
+        selectedStack[0].x = oldCardPos[0];
+        selectedStack[0].y = oldCardPos[1];
+    }
+    // Return to its main pile
+    else {
+        // Restore previous location
+        let j = 0;
+        for (let card of selectedStack) {
+            card.loc = [oldCardLoc[0], oldCardLoc[1] + j];
+            card.x = leftPileX + card.loc[0] * (cardWidth + pileSpacing);
+            card.y = leftPileY + card.loc[1] * cardOverlap;
+            
+            piles[oldCardLoc[0]].push(card);
+            j += 1;
+        }
+
+        // Restore movability of the card below, if it exists.
+        if (oldCardLoc[1] != 0) {
+            piles[oldCardLoc[0]][oldCardLoc[1] - 1].movable = oldCardMovability;
+        }
+    }
+
+    selectedStack = [];
+    draw();
 }
 
 function draw() {
